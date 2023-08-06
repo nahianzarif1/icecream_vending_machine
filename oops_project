@@ -1,0 +1,130 @@
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+// Forward declaration of classes
+class Customer;
+class Order;
+
+class IceCream {
+private:
+    string flavor;
+    double price;
+public:
+    IceCream(const string& flavor, double price): flavor(flavor), price(price) {}
+    string getFlavor() const { 
+        return flavor; 
+        }
+    double getPrice() const { 
+        return price;
+        }
+};
+
+class Customer {
+private:
+    string name;
+    vector<Order> orders;
+
+public:
+    Customer(const string& name) : name(name) {}
+    void addOrder(const Order& order) { orders.push_back(order); }
+    void displayOrders() const;
+
+    friend class Parlor;
+};
+     
+class Order {
+private:
+    IceCream iceCream;
+    int quantity;
+
+public:
+    Order(const IceCream& iceCream, int quantity) : iceCream(iceCream), quantity(quantity) {}
+    double getTotalPrice() const { return iceCream.getPrice() * quantity; }
+
+    friend class Customer;
+};
+
+class Parlor {
+private:
+    vector<IceCream> menu;
+
+public:
+    Parlor() {
+        // Initialize the ice cream menu
+        menu.push_back(IceCream("Vanilla", 30));
+        menu.push_back(IceCream("Chocolate", 35));
+        menu.push_back(IceCream("Strawberry", 40));
+    }
+
+    void displayMenu() const;
+    void takeOrders();
+};
+
+// Customer's member function definition
+void Customer::displayOrders() const {
+    cout << name << "'s Orders:\n";
+    for (const auto& order : orders) {
+        cout << "   " << order.iceCream.getFlavor() << " x" << order.quantity << " - Total Price: Tk." << order.getTotalPrice() << endl;
+    }
+    cout << endl;
+}
+
+// Parlor's member function definitions
+void Parlor::displayMenu() const {
+    cout << "Ice Cream Menu:\n";
+    for (const auto& iceCream : menu) {
+        cout << "   " << iceCream.getFlavor() << " - Price: Tk." << iceCream.getPrice() << endl;
+    }
+    cout <<endl;
+}
+
+void Parlor::takeOrders() {
+    string name;
+    system("cls");
+            cout << endl
+             << endl;
+
+    cout<<"____________________________WELCOME TO ICE-CREAM PARLOR__________________________" << endl;
+            cout << endl
+             << endl;
+     cout << "Enter your name: ";
+    
+    cin >> name;
+
+    Customer customer(name);
+
+    int choice, quantity;
+    char more;
+
+    do {
+        
+        displayMenu();
+        cout << "Enter the ice cream choice (1, 2, or 3): ";
+        cin >> choice;
+        cout << "Enter the quantity: ";
+        cin >> quantity;
+
+        if (choice >= 1 && choice <= menu.size()) {
+            customer.addOrder(Order(menu[choice - 1], quantity));
+        } else {
+            cout << "Invalid choice. Please try again.\n";
+        }
+
+        cout << "Do you want to order more? (y/n): ";
+        cin >> more;
+
+    } while (more == 'y' || more == 'Y');
+
+    customer. displayOrders();
+    cout<<"_________________Thanks for using our service!!!_______________________"<<endl;
+    cout<<"     ___________________Wish you to see soon!!!________________________"<<endl;
+}
+
+int main() {
+    Parlor iceCreamParlor;
+    iceCreamParlor.takeOrders();
+
+    return 0;
+}
